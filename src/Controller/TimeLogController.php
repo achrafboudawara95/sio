@@ -20,7 +20,7 @@ class TimeLogController extends AbstractController
     {
     }
 
-    #[Route('/project/{id}/time-log/create', name: 'time_log_create', methods: ['GET', 'POST'])]
+    #[Route('/app/project/{id}/time-log/create', name: 'time_log_create', methods: ['GET', 'POST'])]
     #[IsGranted('create_timeLog', subject: 'project')]
     public function create(Request $request, Project $project): Response
     {
@@ -46,7 +46,7 @@ class TimeLogController extends AbstractController
         ]);
     }
 
-    #[Route('/timelog/delete/{id}', name: 'timelog_delete', methods: ['POST'])]
+    #[Route('/app/timelog/delete/{id}', name: 'timelog_delete', methods: ['POST'])]
     public function delete(TimeLog $timeLog): Response
     {
         $this->timeLogService->delete($timeLog);
@@ -54,7 +54,7 @@ class TimeLogController extends AbstractController
         return $this->redirectToRoute('project_show', ['id' => $timeLog->getProject()->getId()]);
     }
 
-    #[Route('/project/{id}/time-log/start', name: 'time_log_start', methods: ['GET'])]
+    #[Route('/app/project/{id}/time-log/start', name: 'time_log_start', methods: ['GET'])]
     #[IsGranted('create_timeLog', subject: 'project')]
     public function start(Project $project): Response
     {
@@ -67,7 +67,7 @@ class TimeLogController extends AbstractController
         return $this->redirectToRoute('project_show', ['id' => $project->getId()]);
     }
 
-    #[Route('/timelog/stop/{id}', name: 'time_log_stop', methods: ['GET'])]
+    #[Route('/app/timelog/stop/{id}', name: 'time_log_stop', methods: ['GET'])]
     public function stop(TimeLog $timeLog): Response
     {
         $this->timeLogService->stop($timeLog);

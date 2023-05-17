@@ -20,4 +20,14 @@ class LoginController extends AbstractController
             'error' => $error,
         ]);
     }
+
+    #[Route('/logout', name: 'logout')]
+    public function logout()
+    {
+        // The actual logout logic can be handled by Symfony's security system.
+        // However, if you have a custom logout logic, you can implement it here.
+
+        // Redirect the user to the homepage or any other page after logout.
+        return $this->redirectToRoute('home');
+    }
 }
