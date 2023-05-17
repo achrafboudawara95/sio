@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Entity\Project;
 use App\Form\ProjectType;
 use App\Service\ProjectService;
+use App\Service\TimeLogService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ProjectController extends AbstractController
 {
 
-    public function __construct(private readonly ProjectService $projectService)
+    public function __construct(
+        private readonly ProjectService $projectService,
+        private readonly TimeLogService $timeLogService
+    )
     {
     }
 
@@ -49,8 +53,10 @@ class ProjectController extends AbstractController
     #[IsGranted('view', subject: 'project')]
     public function show(Project $project): Response
     {
+
         return $this->render('project/show.html.twig', [
             'project' => $project,
+            'timeLogs' => $this->timeLogService->getByProject($project)
         ]);
     }
 }

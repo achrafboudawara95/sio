@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Project;
 use App\Entity\User;
 use App\Repository\ProjectRepository;
+use App\Repository\TimeLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ProjectService

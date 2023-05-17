@@ -9,6 +9,7 @@ use App\Exception\ValidationException;
 use App\Repository\TimeLogRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use UnexpectedValueException;
 
 class TimeLogService
 {
@@ -67,5 +68,22 @@ class TimeLogService
             $this->flashService->addFlashError('You can\'t overlap time log.');
             throw new ValidationException("Overlapping timeLog");
         }
+    }
+
+    public function stop(TimeLog $timeLog): void
+    {
+        if (null !== $timeLog->getEndTime())
+        {
+            throw new UnexpectedValueException(sprintf('Time log %s already stopped', $timeLog->getId()));
+        }
+
+        $timeLog->setEndTime(new DateTime());
+
+        $this->entityManager->flush();
+    }
+
+    public function getByProject(Project $project): array
+    {
+        return $this->timeLogRepository->findByProjectWithSortedTimeLogs($project);
     }
 }

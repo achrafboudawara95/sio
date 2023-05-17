@@ -16,7 +16,7 @@
             </thead>
             <tbody>
             {# TODO:Pagination ;) #}
-            {% for timeLog in project.timeLogs %}
+            {% for timeLog in timeLogs %}
                 <tr>
                     <td>{{ timeLog.startTime|date('Y-m-d H:i:s') }}</td>
                     <td>{{ not timeLog.endTime ? '-' : timeLog.endTime|date('Y-m-d H:i:s') }}</td>
@@ -25,6 +25,9 @@
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
+                        {% if not timeLog.endTime %}
+                        <a href="{{ path('time_log_stop', { 'id': timeLog.id }) }}" class="btn btn-primary">Stop</a>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

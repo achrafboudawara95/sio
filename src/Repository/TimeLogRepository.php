@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Project;
 use App\Entity\TimeLog;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -59,5 +60,15 @@ class TimeLogRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findByProjectWithSortedTimeLogs(Project $project): array
+    {
+        return $this->createQueryBuilder('tl')
+            ->where('tl.project = :project')
+            ->setParameter('project', $project)
+            ->orderBy('tl.endTime', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -66,4 +66,12 @@ class TimeLogController extends AbstractController
 
         return $this->redirectToRoute('project_show', ['id' => $project->getId()]);
     }
+
+    #[Route('/timelog/stop/{id}', name: 'time_log_stop', methods: ['GET'])]
+    public function stop(TimeLog $timeLog): Response
+    {
+        $this->timeLogService->stop($timeLog);
+
+        return $this->redirectToRoute('project_show', ['id' => $timeLog->getProject()->getId()]);
+    }
 }
