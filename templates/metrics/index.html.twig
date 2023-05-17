@@ -1,0 +1,156 @@
+{% extends 'home.html.twig' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="startTime" class="required">Start Time</label>
+                    <input type="datetime-local" id="startTime" name="startTime" required="required" class="form-control datepicker">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="endTime" class="required">End Time</label>
+                    <input type="datetime-local" id="endTime" name="endTime" required="required" class="form-control datepicker">
+                </div>
+            </div>
+        </div>
+        <button id="showBtn" type="button" class="btn btn-primary">Show</button>
+        <h2>Total hours per day</h2>
+        <canvas id="dailyChart"></canvas>
+        <h2>Total hours per month</h2>
+        <canvas id="monthlyChart"></canvas>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Keep references to the chart instances
+            let dailyChart = null;
+            let monthlyChart = null;
+
+            $('#showBtn').click(function() {
+                var startDate = $('#startTime').val();
+                var endDate = $('#endTime').val();
+
+                if (startDate === '' || endDate === '') {
+                    alert('Please provide both start time and end time.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '{{ path('daily_metrics') }}',
+                    method: 'GET',
+                    data: {
+                        startDate: startDate,
+                        endDate: endDate
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        const dailyLabels = data.map(entry => entry.day);
+                        const dailyDurations = data.map(entry => entry.total_duration_hours);
+
+                        // Destroy the previous daily chart instance if it exists
+                        if (dailyChart !== null) {
+                            dailyChart.destroy();
+                        }
+
+                        // Create the daily chart using Chart.js
+                        const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+                        dailyChart = new Chart(dailyCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: dailyLabels,
+                                datasets: [{
+                                    label: 'Work Durations (Daily)',
+                                    data: dailyDurations,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Total Duration (hours)'
+                                        }
+                                    },
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Day'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle the error here
+                    }
+                });
+
+                $.ajax({
+                    url: '{{ path('monthly_metrics') }}',
+                    method: 'GET',
+                    data: {
+                        startDate: startDate,
+                        endDate: endDate
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        const monthlyLabels = data.map(entry => entry.month);
+                        const monthlyDurations = data.map(entry => entry.total_duration_hours);
+
+                        // Destroy the previous monthly chart instance if it exists
+                        if (monthlyChart !== null) {
+                            monthlyChart.destroy();
+                        }
+
+                        // Create the monthly chart using Chart.js
+                        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+                        monthlyChart = new Chart(monthlyCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: monthlyLabels,
+                                datasets: [{
+                                    label: 'Work Durations (Monthly)',
+                                    data: monthlyDurations,
+                                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Total Duration (hours)'
+                                        }
+                                    },
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Month'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle the error here
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

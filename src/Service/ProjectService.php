@@ -6,6 +6,7 @@ use App\Entity\Project;
 use App\Entity\User;
 use App\Repository\ProjectRepository;
 use App\Repository\TimeLogRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ProjectService
@@ -33,5 +34,15 @@ class ProjectService
         $this->entityManager->flush();
 
         $this->flashService->addFlashSuccess('Project created successfully.');
+    }
+
+    public function getProjectsDailyReport(User $user, DateTime $startDate, DateTime $endDate): array
+    {
+        return $this->projectRepository->getWorkDurationsByDay($user, $startDate, $endDate);
+    }
+
+    public function getProjectsMonthlyReport(User $user, DateTime $startDate, DateTime $endDate): array
+    {
+        return $this->projectRepository->getWorkDurationsByMonth($user, $startDate, $endDate);
     }
 }
