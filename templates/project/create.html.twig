@@ -1,0 +1,29 @@
+{% extends 'home.html.twig' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>Create Project</h1>
+
+        <div class="card">
+            <div class="card-body">
+                {{ form_start(form) }}
+
+                <div class="form-group">
+                    {{ form_label(form.name) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.name) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.description) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Create</button>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
