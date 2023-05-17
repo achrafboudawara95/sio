@@ -7,6 +7,7 @@ use App\Entity\TimeLog;
 use App\Entity\User;
 use App\Exception\ValidationException;
 use App\Repository\TimeLogRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
 class TimeLogService
@@ -22,16 +23,11 @@ class TimeLogService
     /**
      * @throws ValidationException
      */
-    public function createTimeLog(Project $project, TimeLog $timeLog,): void
+    public function createTimeLog(Project $project, TimeLog $timeLog): void
     {
         $timeLog->setProject($project);
 
-        if (!empty($this->timeLogRepository->findOverlappingTimeLogs($timeLog)))
-        {
-
-            $this->flashService->addFlashError('You can\'t overlap time log.');
-            throw new ValidationException("Overlapping timeLog");
-        }
+        $this->verifyOverlapping($timeLog);
 
         $this->entityManager->persist($timeLog);
         $this->entityManager->flush();
@@ -43,5 +39,33 @@ class TimeLogService
     {
         $this->entityManager->remove($timeLog);
         $this->entityManager->flush();
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public function start(Project $project): void
+    {
+        $timeLog = new TimeLog();
+        $timeLog->setStartTime(new DateTime());
+        $timeLog->setEndTime(null);
+        $timeLog->setProject($project);
+
+        $this->verifyOverlapping($timeLog);
+
+        $this->entityManager->persist($timeLog);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private function verifyOverlapping(TimeLog $timeLog): void
+    {
+        if (!empty($this->timeLogRepository->findOverlappingTimeLogs($timeLog)))
+        {
+            $this->flashService->addFlashError('You can\'t overlap time log.');
+            throw new ValidationException("Overlapping timeLog");
+        }
     }
 }

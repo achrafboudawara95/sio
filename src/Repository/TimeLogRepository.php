@@ -39,15 +39,24 @@ class TimeLogRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * Search for time logs that are in the same date range of $timeLog
+     *
+     * @param TimeLog $timeLog
+     * @return array
+     */
     public function findOverlappingTimeLogs(TimeLog $timeLog): array
     {
         $qb = $this->createQueryBuilder('tl');
         $qb->andWhere($qb->expr()->eq('tl.project', ':project'))
             ->andWhere($qb->expr()->lt('tl.startTime', ':endTime'))
-            ->andWhere($qb->expr()->gt('tl.endTime', ':startTime'))
             ->setParameter('project', $timeLog->getProject())
-            ->setParameter('startTime', $timeLog->getStartTime())
             ->setParameter('endTime', $timeLog->getEndTime());
+
+        if (null !== $timeLog->getEndTime()) {
+            $qb->andWhere($qb->expr()->gt('tl.endTime', ':startTime'))
+                ->setParameter('startTime', $timeLog->getStartTime());
+        }
 
         return $qb->getQuery()->getResult();
     }

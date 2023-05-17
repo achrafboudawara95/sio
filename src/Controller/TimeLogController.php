@@ -35,6 +35,7 @@ class TimeLogController extends AbstractController
 
                 return $this->redirectToRoute('project_show', ['id' => $project->getId()]);
             } catch (ValidationException $e) {
+                //TODO: replace with exception handler
                 $form->addError(new FormError($e->getMessage()));
             }
         }
@@ -51,5 +52,18 @@ class TimeLogController extends AbstractController
         $this->timeLogService->delete($timeLog);
 
         return $this->redirectToRoute('project_show', ['id' => $timeLog->getProject()->getId()]);
+    }
+
+    #[Route('/project/{id}/time-log/start', name: 'time_log_start', methods: ['GET'])]
+    #[IsGranted('create_timeLog', subject: 'project')]
+    public function start(Project $project): Response
+    {
+        try {
+            $this->timeLogService->start($project);
+        } catch (ValidationException $e) {
+            //TODO: replace with exception handler
+        }
+
+        return $this->redirectToRoute('project_show', ['id' => $project->getId()]);
     }
 }
