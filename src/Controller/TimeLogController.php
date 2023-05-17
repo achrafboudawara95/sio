@@ -20,7 +20,7 @@ class TimeLogController extends AbstractController
     {
     }
 
-    #[Route('/project/{id}/time-log/create', name: 'time_log_create')]
+    #[Route('/project/{id}/time-log/create', name: 'time_log_create', methods: ['GET', 'POST'])]
     #[IsGranted('create_timeLog', subject: 'project')]
     public function create(Request $request, Project $project): Response
     {
@@ -43,5 +43,13 @@ class TimeLogController extends AbstractController
             'form' => $form->createView(),
             'project' => $project,
         ]);
+    }
+
+    #[Route('/timelog/delete/{id}', name: 'timelog_delete', methods: ['POST'])]
+    public function delete(TimeLog $timeLog): Response
+    {
+        $this->timeLogService->delete($timeLog);
+
+        return $this->redirectToRoute('project_show', ['id' => $timeLog->getProject()->getId()]);
     }
 }

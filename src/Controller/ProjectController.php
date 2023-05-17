@@ -17,7 +17,7 @@ class ProjectController extends AbstractController
     {
     }
 
-    #[Route('/app/projects', name: 'project_index')]
+    #[Route('/app/projects', name: 'project_index', methods: ['GET'])]
     public function index(): Response
     {
         return $this->render('project/index.html.twig', [
@@ -25,7 +25,7 @@ class ProjectController extends AbstractController
         ]);
     }
 
-    #[Route('/project/create', name: 'project_create')]
+    #[Route('/project/create', name: 'project_create', methods: ['GET', 'POST'])]
     public function create(Request $request): Response
     {
         $project = new Project();
@@ -45,7 +45,7 @@ class ProjectController extends AbstractController
         ]);
     }
 
-    #[Route('/project/{id}', name: 'project_show')]
+    #[Route('/project/{id}', name: 'project_show', methods: ['GET'])]
     #[IsGranted('view', subject: 'project')]
     public function show(Project $project): Response
     {

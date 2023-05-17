@@ -38,4 +38,10 @@ class TimeLogService
 
         $this->flashService->addFlashSuccess('Time line created successfully.');
     }
+
+    public function delete(TimeLog $timeLog): void
+    {
+        $this->entityManager->remove($timeLog);
+        $this->entityManager->flush();
+    }
 }
