@@ -11,11 +11,17 @@ class ProjectVoter implements VoterInterface
 {
     // these strings are just invented: you can use anything
     const VIEW = 'view';
+    const CREATE_TIME_LOG = 'create_timeLog';
+
+    const SUPPORT_ATTRIBUTES = [
+        self::VIEW,
+        self::CREATE_TIME_LOG
+    ];
 
     protected function supports(string $attribute, mixed $subject): bool
     {
         // if the attribute isn't one we support, return false
-        if ($attribute != self::VIEW) {
+        if (!in_array($attribute, self::SUPPORT_ATTRIBUTES)) {
             return false;
         }
 
@@ -30,7 +36,7 @@ class ProjectVoter implements VoterInterface
     protected function voteOnAttribute(string $attribute, Project $project, User $user): bool
     {
         return match($attribute) {
-            self::VIEW => $this->canView($project, $user),
+            self::VIEW, self::CREATE_TIME_LOG => $this->canView($project, $user),
             default => throw new \LogicException(sprintf('There is no action for %s', $attribute))
         };
     }

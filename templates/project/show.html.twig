@@ -4,6 +4,27 @@
     <div class="container mt-4">
         <h1>{{ project.name }}</h1>
         <p>{{ project.description }}</p>
+
+        <h2>Time Logs</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Start Time</th>
+                <th>End Time</th>
+            </tr>
+            </thead>
+            <tbody>
+            {# TODO:Pagination ;) #}
+            {% for timeLog in project.timeLogs %}
+                <tr>
+                    <td>{{ timeLog.startTime|date('Y-m-d H:i:s') }}</td>
+                    <td>{{ timeLog.endTime|date('Y-m-d H:i:s') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
         <a href="{{ path('project_index') }}" class="btn btn-secondary">Back to Projects</a>
+        <a href="{{ path('time_log_create', { 'id': project.id }) }}" class="btn btn-primary">Add Time Log</a>
     </div>
 {% endblock %}
